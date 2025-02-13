@@ -25,6 +25,14 @@ extra-doc-files:
   CHANGELOG.md
   INPUT-OUTPUT-FORK.md
   README.md
+extra-source-files:
+  liblmdb/*.h
+  liblmdb/*.c
+
+flag standalone
+  description: Use a built-in copy of the lmdb library
+  default:     False
+
 
 source-repository head
   type:     git
@@ -60,7 +68,15 @@ library ffi
   build-depends:      base >=4.14 && <4.21
   build-tool-depends: hsc2hs:hsc2hs
   exposed-modules:    Database.LMDB.FFI
-  pkgconfig-depends:  lmdb >=0.9 && <0.10
+  include-dirs:
+    liblmdb
+
+  if flag(standalone)
+    c-sources:
+      liblmdb/mdb.c
+      liblmdb/midl.c
+      liblmdb/mplay.c
+
 
 test-suite test
   import:           warnings
